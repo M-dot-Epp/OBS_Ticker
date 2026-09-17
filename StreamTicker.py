@@ -17,7 +17,9 @@ import os
 # ===============================================
 
 # Path where the script will render HTML output for the Browser Source in OBS
-RUNDOWN_FILE_PATH = os.path.abspath(r"C:\Users\malik\Documents\OBS_Stream_Tickerobs_rundown.html")
+current_dir = os.path.dirname(os.path.abspath(__file__)) # Get path of the python file
+RUNDOWN_FILE_PATH = os.path.join(current_dir, "OBS_Stream_rundown.html")
+
 
 # Global variables to store Hotkey IDs so OBS can track keybidings
 HOTKEY_NEXT_ID = obs.OBS_INVALID_HOTKEY_ID
@@ -32,6 +34,7 @@ topics_list = [] # Create list that will be populated by the topics from the txt
 # list will be a 2D list as it will hold a value for the topic, and whether that topic is ACTIVE, UPCOMING, or COMPLETE
 current_index = 0 # Track which topic is set to ACTIVE state. Initialized to first item
 topics_file_path = "" # Will hold path to text file. Location will be specified in script properties
+layout_orintation = "horizontal" # Default layout style
 
 # ===============================================
 # FILE PARSER & DATA PROCESSING
@@ -72,7 +75,6 @@ def load_topics_from_file(file_path):
                 # Check line for comma-separated values
                 if "," in line_str:
                     # split at the comma and remove whitespace of each split string.
-
                     split_items = [item.strip() for item in line_str.split(",") if item.strip()]
                     raw_topics.extend(split_items) # Add each item to raw list
                 else:
@@ -148,7 +150,7 @@ def generate_html():
         # Full HTML Document Template
         # When writing HTML code in Python script, use double curly brackts ({}) as Python will interpret it as python code instead 
         # of plain text
-        full_html = f"""
+        full_vert_html = f"""
         <!DOCTYPE html>
         <html>
         <head>
@@ -219,31 +221,118 @@ def generate_html():
             <div class="rundown-container">
                 {html_content}
             </div>
+
             <!-- AUTO REFRESH SCRIPT -->
             <script>
-                // Automatically updates the rundown container every second without reloading the page
-                setInterval(function () {{
-                    fetch('obs_rundown.html?t=' + Date.now())
-                        .then(response => response.text())
-                        .then(html => {{
-                            var parser = new DOMParser();
-                            var doc = parser.parseFromString(html, 'text/html');
-                            var newContainer = doc.querySelector('.rundown-container');
-                            if (newContainer) {{
-                                document.querySelector('.rundown-container').innerHTML = newContainer.innerHTML;
-                            }}
-                        }})
-                        .catch(err => console.log('Update check failed', err));
-                    }}, 1000);
+                setTimeout(function () {{
+                    location.reload(true);
+                }}, 500);
             </script>
+        </body>
+        </html>
+        """
 
+        full_horiz_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+                body {{
+                    font-family: 'Impact', 'Arial Black', sans-serif;
+                    background: transparent;
+                    color: #ffffff;
+                    /* Take up full width of the browser source */
+                    width: 100vw; 
+                    height: 100vh;
+                    overflow: hidden;
+                }}
+                .rundown-container {{
+                    display: flex;
+                    flex-direction: row;
+                    background: linear-gradient(180deg, #111 0%, #222 100%);
+                    border-top: 4px solid #e10600; /* Accent moved to top */
+                    box-shadow: 0 -5px 20px rgba(0,0,0,0.6);
+                    height: 60px; /* Fixed height for a bottom ticker */
+                    width: 100%;
+                    align-items: center;
+                }}
+                .header {{
+                    background: #e10600;
+                    color: #fff;
+                    padding: 0 20px;
+                    font-size: 18px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    white-space: nowrap;
+                }}
+                .item {{
+                    display: flex;
+                    align-items: center;
+                    padding: 0 20px;
+                    border-right: 1px solid #333; /* Divider between items */
+                    font-size: 15px;
+                    text-transform: uppercase;
+                    transition: all 0.3s ease;
+                    white-space: nowrap; /* Prevents text from wrapping to a new line */
+                    height: 100%;
+                }}
+                .active-item {{
+                    background: #ffffff;
+                    color: #000000;
+                    font-size: 17px;
+                    font-weight: bold;
+                    border-bottom: 4px solid #ffcc00; /* Gold highlight moved to bottom */
+                }}
+                .done-item {{
+                    color: #666666;
+                    text-decoration: line-through;
+                    background: #181818;
+                }}
+                .upcoming-item {{
+                    color: #cccccc;
+                }}
+                .badge {{
+                    display: inline-block;
+                    padding: 2px 6px;
+                    font-size: 12px;
+                    border-radius: 2px;
+                    margin-right: 10px;
+                    min-width: 24px;
+                    text-align: center;
+                }}
+                .active-badge {{ background: #e10600; color: #fff; }}
+                .done-badge {{ background: #333; color: #888; }}
+                .upcoming-badge {{ background: #444; color: #fff; }}
+            </style>
+        </head>
+        <body>
+            <div class="rundown-container">
+                {html_content}
+            </div>
+
+            <!-- AUTO REFRESH SCRIPT -->
+            <script>
+                setTimeout(function () {{
+                    location.reload(true);
+                }}, 500);
+            </script>
         </body>
         </html>
         """
 
         # Overwrite the target HTML file on disk
-        with open(RUNDOWN_FILE_PATH, "w", encoding="utf-8") as f:
-            f.write(full_html)
+        if layout_orintation == "horizontal":
+            with open(RUNDOWN_FILE_PATH, "w", encoding="utf-8") as f:
+                f.write(full_horiz_html)
+        else:
+            with open(RUNDOWN_FILE_PATH, "w", encoding="utf-8") as f:
+                f.write(full_vert_html)
+
 
 
 # ==============================================================================
@@ -259,7 +348,7 @@ def trigger_next():
         topics_list[current_index]["status"] = "COMPLETE"
         current_index += 1
         topics_list[current_index]["status"] = "ACTIVE"
-        #print(f"Current topic is "topics_list[current_index]['title'])
+        print(f"Current topic is {topics_list[current_index]['title']}")
         generate_html()
 
 def trigger_prev():
@@ -334,10 +423,19 @@ def script_properties():
         None
     )
 
+    # Create a radio selection for the orientation
+    layout_list = obs.obs_properties_add_list(props, "orientation_selection", "Overlay Orientation", obs.OBS_COMBO_TYPE_RADIO, obs.OBS_COMBO_FORMAT_STRING)
+
+    # Add options to the list    
+    obs.obs_property_list_add_string(layout_list, "Vertical (Side Panel)", "vertical")
+    obs.obs_property_list_add_string(layout_list, "Horizontal (Top/Bottom Ticker)", "horizontal")
+
+
     # Action Buttons
     obs.obs_properties_add_button(props, "btn_reload", "🔄 Reload Topics File", btn_reload_click)
     obs.obs_properties_add_button(props, "btn_prev", "◄ Previous Topic", btn_prev_click)
     obs.obs_properties_add_button(props, "btn_next", "Next Topic ►", btn_next_click)
+    
 
     return props
 
@@ -354,12 +452,23 @@ def script_update(settings):
         topics_file_path = new_path
         load_topics_from_file(topics_file_path)
 
+
+    # Check for change in orientation
+    new_layout = obs.obs_data_get_string(settings, "layout_orientaion")
+    if new_layout and new_layout != layout_orintation:
+        layout_orintation = new_layout
+        generate_html()
+
 def script_load(settings):
     """
     Called when OBS loads the script on boot or script refresh.
     Registers hotkeys and restores saved hotkey bindings.
     """
     global HOTKEY_NEXT_ID, HOTKEY_PREV_ID, topics_file_path
+
+    saved_layout = obs.obs_data_get_string(settings, "layout_orientation")
+    if saved_layout:
+        layout_orintation = saved_layout
 
     # Initial HTML Render
     generate_html()

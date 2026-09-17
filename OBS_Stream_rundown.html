@@ -1,0 +1,127 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                * { box-sizing: border-box; margin: 0; padding: 0; }
+                body {
+                    font-family: 'Impact', 'Arial Black', sans-serif;
+                    background: transparent;
+                    color: #ffffff;
+                    /* Take up full width of the browser source */
+                    width: 100vw; 
+                    height: 100vh;
+                    overflow: hidden;
+                }
+                .rundown-container {
+                    display: flex;
+                    flex-direction: row;
+                    background: linear-gradient(180deg, #111 0%, #222 100%);
+                    border-top: 4px solid #e10600; /* Accent moved to top */
+                    box-shadow: 0 -5px 20px rgba(0,0,0,0.6);
+                    height: 60px; /* Fixed height for a bottom ticker */
+                    width: 100%;
+                    align-items: center;
+                }
+                .header {
+                    background: #e10600;
+                    color: #fff;
+                    padding: 0 20px;
+                    font-size: 18px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    white-space: nowrap;
+                }
+                .item {
+                    display: flex;
+                    align-items: center;
+                    padding: 0 20px;
+                    border-right: 1px solid #333; /* Divider between items */
+                    font-size: 15px;
+                    text-transform: uppercase;
+                    transition: all 0.3s ease;
+                    white-space: nowrap; /* Prevents text from wrapping to a new line */
+                    height: 100%;
+                }
+                .active-item {
+                    background: #ffffff;
+                    color: #000000;
+                    font-size: 17px;
+                    font-weight: bold;
+                    border-bottom: 4px solid #ffcc00; /* Gold highlight moved to bottom */
+                }
+                .done-item {
+                    color: #666666;
+                    text-decoration: line-through;
+                    background: #181818;
+                }
+                .upcoming-item {
+                    color: #cccccc;
+                }
+                .badge {
+                    display: inline-block;
+                    padding: 2px 6px;
+                    font-size: 12px;
+                    border-radius: 2px;
+                    margin-right: 10px;
+                    min-width: 24px;
+                    text-align: center;
+                }
+                .active-badge { background: #e10600; color: #fff; }
+                .done-badge { background: #333; color: #888; }
+                .upcoming-badge { background: #444; color: #fff; }
+            </style>
+        </head>
+        <body>
+            <div class="rundown-container">
+                <div class='header'>Rundown</div>
+            <div class="item active-item">
+                <span class="badge active-badge">NOW</span>
+                <span class="title">Intro</span>
+            </div>
+            
+            <div class="item upcoming-item">
+                <span class="badge upcoming-badge">2</span>
+                <span class="title">Ranking the Spiderman movie Villains</span>
+            </div>
+            
+            <div class="item upcoming-item">
+                <span class="badge upcoming-badge">3</span>
+                <span class="title">Top 10 Disney Movies</span>
+            </div>
+            
+            <div class="item upcoming-item">
+                <span class="badge upcoming-badge">4</span>
+                <span class="title">Q rates the Streetfighter 6 Level 3 Supers</span>
+            </div>
+            
+            <div class="item upcoming-item">
+                <span class="badge upcoming-badge">5</span>
+                <span class="title">Blizzcon announcements</span>
+            </div>
+            
+            <div class="item upcoming-item">
+                <span class="badge upcoming-badge">6</span>
+                <span class="title">Nerd Recommendations</span>
+            </div>
+            
+            <div class="item upcoming-item">
+                <span class="badge upcoming-badge">7</span>
+                <span class="title">Trash Takes</span>
+            </div>
+            
+            </div>
+
+            <!-- AUTO REFRESH SCRIPT -->
+            <script>
+                setTimeout(function () {
+                    location.reload(true);
+                }, 500);
+            </script>
+        </body>
+        </html>
+        
