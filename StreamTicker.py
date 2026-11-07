@@ -35,7 +35,7 @@ topics_list = [] # Create list that will be populated by the topics from the txt
 current_index = 0 # Track which topic is set to ACTIVE state. Initialized to first item
 topics_file_path = "" # Will hold path to text file. Location will be specified in script properties
 layout_orintation = "horizontal" # Default layout style
-
+layout_color = "#e10600" # Change Color of header and border (Default is red)
 # ===============================================
 # FILE PARSER & DATA PROCESSING
 # ===============================================
@@ -61,7 +61,7 @@ def load_topics_from_file(file_path):
         print(f"[Rundown Script] File not found or path empty: {file_path}")
         return
 
-# Create empty list for topics read from file
+    # Create empty list for topics read from file
     raw_topics = []
 
     try:
@@ -108,7 +108,7 @@ def load_topics_from_file(file_path):
         topics_list[0]["status"] = "ACTIVE"
 
         # Render HTML file to reflect changes
-        generate_html()
+        generate_html(layout_color)
         print(f"[Rundown Script] successfully loaded {len(topics_list)} topics from file topics_file_path")
 
 # =====================================================================================
@@ -117,7 +117,9 @@ def load_topics_from_file(file_path):
 
 # Generates HTML/CSS file utilized by OBS Browser Source.
 # Runs everytime the topics advance, regress, or reload
-def generate_html():
+def generate_html(color_setting):
+    # Print current color
+
     if not topics_list:
         #generate clean placeholder
         html_content = "<div class='header'>No Topics Loaded</div>"
@@ -166,13 +168,13 @@ def generate_html():
                 }}
                 .rundown-container {{
                     background: linear-gradient(180deg, #111 0%, #222 100%);
-                    border-left: 6px solid #e10600;
+                    border-left: 6px solid {color_setting};
                     box-shadow: 0 10px 20px rgba(0,0,0,0.6);
                     border-radius: 4px;
                     overflow: hidden;
                 }}
                 .header {{
-                    background: #e10600;
+                    background: {color_setting};
                     color: #fff;
                     padding: 8px 12px;
                     font-size: 16px;
@@ -212,7 +214,7 @@ def generate_html():
                     min-width: 24px;
                     text-align: center;
                 }}
-                .active-badge {{ background: #e10600; color: #fff; }}
+                .active-badge {{ background: {color_setting}; color: #fff; }}
                 .done-badge {{ background: #333; color: #888; }}
                 .upcoming-badge {{ background: #444; color: #fff; }}
             </style>
@@ -247,19 +249,20 @@ def generate_html():
                     width: 100vw; 
                     height: 100vh;
                     overflow: hidden;
+                    ;
                 }}
                 .rundown-container {{
                     display: flex;
                     flex-direction: row;
                     background: linear-gradient(180deg, #111 0%, #222 100%);
-                    border-top: 4px solid #e10600; /* Accent moved to top */
+                    border-top: 4px solid {color_setting}; /* Accent moved to top */
                     box-shadow: 0 -5px 20px rgba(0,0,0,0.6);
                     height: 60px; /* Fixed height for a bottom ticker */
                     width: 100%;
                     align-items: center;
                 }}
                 .header {{
-                    background: #e10600;
+                    background: {color_setting};
                     color: #fff;
                     padding: 0 20px;
                     font-size: 18px;
@@ -305,7 +308,7 @@ def generate_html():
                     min-width: 24px;
                     text-align: center;
                 }}
-                .active-badge {{ background: #e10600; color: #fff; }}
+                .active-badge {{ background: {color_setting}; color: #fff; }}
                 .done-badge {{ background: #333; color: #888; }}
                 .upcoming-badge {{ background: #444; color: #fff; }}
             </style>
@@ -349,7 +352,7 @@ def trigger_next():
         current_index += 1
         topics_list[current_index]["status"] = "ACTIVE"
         print(f"Current topic is {topics_list[current_index]['title']}")
-        generate_html()
+        generate_html(layout_color)
 
 def trigger_prev():
     """Reverts active topic to UPCOMING and sets previous topic as ACTIVE."""
@@ -360,7 +363,7 @@ def trigger_prev():
         topics_list[current_index]["status"] = "UPCOMING"
         current_index -= 1
         topics_list[current_index]["status"] = "ACTIVE"
-        generate_html()
+        generate_html(layout_color)
 
 
 # ==============================================================================
@@ -383,6 +386,7 @@ def btn_reload_click(props, prop):
     load_topics_from_file(topics_file_path)
     return True
 
+
 def btn_next_click(props, prop):
     """Callback executed when user clicks 'Next Topic' button in OBS UI."""
     trigger_next()
@@ -403,6 +407,7 @@ def script_description():
     return (
         "<b>Podcast Rundown Panel with File Loader</b><br>"
         "Loads topics from a .txt file (line-by-line or comma-separated).<br>"
+        "Change color scheme with color picker"
         "Assign hotkeys in <i>Settings -> Hotkeys</i> to cycle topics live."
     )
 
@@ -433,9 +438,10 @@ def script_properties():
 
     # Action Buttons
     obs.obs_properties_add_button(props, "btn_reload", "🔄 Reload Topics File", btn_reload_click)
+    obs.obs_properties_add_color(props, "pkr_color", "Select Color Scheme")
     obs.obs_properties_add_button(props, "btn_prev", "◄ Previous Topic", btn_prev_click)
     obs.obs_properties_add_button(props, "btn_next", "Next Topic ►", btn_next_click)
-    
+
 
     return props
 
@@ -445,6 +451,8 @@ def script_update(settings):
     (such as picking a new text file).
     """
     global topics_file_path
+    global layout_color
+
     new_path = obs.obs_data_get_string(settings, "topics_file")
 
     # If user changed file path, update path and load topics automatically
@@ -457,7 +465,21 @@ def script_update(settings):
     new_layout = obs.obs_data_get_string(settings, "layout_orientaion")
     if new_layout and new_layout != layout_orintation:
         layout_orintation = new_layout
-        generate_html()
+        generate_html(layout_color)
+
+    # Get saved color settings from settings
+    layout_color = obs.obs_data_get_int(settings, "pkr_color")
+
+    # Convert OBS Color integer to standard RGB values
+    r = layout_color & 0xFF
+    g = (layout_color >> 8) & 0xFF
+    b = (layout_color >> 16) & 0xFF
+
+    selected_color = f"#{r:02x}{g:02x}{b:02x}"
+
+    print(f"Picked color: {selected_color}")
+    layout_color = selected_color
+    generate_html(layout_color)
 
 def script_load(settings):
     """
@@ -471,7 +493,7 @@ def script_load(settings):
         layout_orintation = saved_layout
 
     # Initial HTML Render
-    generate_html()
+    generate_html(layout_color)
 
     # 1. Register Hotkeys with OBS Core
     HOTKEY_NEXT_ID = obs.obs_hotkey_register_frontend(
@@ -500,7 +522,7 @@ def script_load(settings):
         load_topics_from_file(topics_file_path)
 
 def script_save(settings):
-    """Called when OBS shuts down or saves settings; preserves hotkey bindings."""
+    """Called when OBS shuts down or saves settings; preserves hotkey bindings and Color Setting."""
     next_array = obs.obs_hotkey_save(HOTKEY_NEXT_ID)
     obs.obs_data_set_array(settings, "rundown_next_topic", next_array)
     obs.obs_data_array_release(next_array)

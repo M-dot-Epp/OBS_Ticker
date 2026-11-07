@@ -18,4 +18,8 @@ Topics can be scrolled in real-time using the next/previous buttons on the scrip
 or by creating hoykeys
 
 
+----------------------------------   Version 1.1 --------------------------------
 
+Add to Properties a color picker and the ability to change the order of the topics
+
+Add a scrolling feature when there are more topics than what fits on screen
