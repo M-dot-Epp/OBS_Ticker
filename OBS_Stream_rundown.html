@@ -13,19 +13,20 @@
                     width: 100vw; 
                     height: 100vh;
                     overflow: hidden;
+                    ;
                 }
                 .rundown-container {
                     display: flex;
                     flex-direction: row;
                     background: linear-gradient(180deg, #111 0%, #222 100%);
-                    border-top: 4px solid #e10600; /* Accent moved to top */
+                    border-top: 4px solid #aa8b4c; /* Accent moved to top */
                     box-shadow: 0 -5px 20px rgba(0,0,0,0.6);
                     height: 60px; /* Fixed height for a bottom ticker */
                     width: 100%;
                     align-items: center;
                 }
                 .header {
-                    background: #e10600;
+                    background: #aa8b4c;
                     color: #fff;
                     padding: 0 20px;
                     font-size: 18px;
@@ -71,7 +72,7 @@
                     min-width: 24px;
                     text-align: center;
                 }
-                .active-badge { background: #e10600; color: #fff; }
+                .active-badge { background: #aa8b4c; color: #fff; }
                 .done-badge { background: #333; color: #888; }
                 .upcoming-badge { background: #444; color: #fff; }
             </style>
@@ -79,38 +80,43 @@
         <body>
             <div class="rundown-container">
                 <div class='header'>Rundown</div>
-            <div class="item active-item">
-                <span class="badge active-badge">NOW</span>
+            <div class="item done-item">
+                <span class="badge done-badge">✓</span>
                 <span class="title">Intro</span>
             </div>
             
-            <div class="item upcoming-item">
-                <span class="badge upcoming-badge">2</span>
-                <span class="title">Ranking the Spiderman movie Villains</span>
+            <div class="item done-item">
+                <span class="badge done-badge">✓</span>
+                <span class="title">Best Wrestling Heels & Faces</span>
             </div>
             
-            <div class="item upcoming-item">
-                <span class="badge upcoming-badge">3</span>
-                <span class="title">Top 10 Disney Movies</span>
+            <div class="item done-item">
+                <span class="badge done-badge">✓</span>
+                <span class="title">Tim’s Trivia</span>
             </div>
             
-            <div class="item upcoming-item">
-                <span class="badge upcoming-badge">4</span>
-                <span class="title">Q rates the Streetfighter 6 Level 3 Supers</span>
+            <div class="item done-item">
+                <span class="badge done-badge">✓</span>
+                <span class="title">Onimusha Way of the Sword</span>
             </div>
             
-            <div class="item upcoming-item">
-                <span class="badge upcoming-badge">5</span>
-                <span class="title">Blizzcon announcements</span>
+            <div class="item done-item">
+                <span class="badge done-badge">✓</span>
+                <span class="title">Overwatch is Back</span>
             </div>
             
-            <div class="item upcoming-item">
-                <span class="badge upcoming-badge">6</span>
+            <div class="item done-item">
+                <span class="badge done-badge">✓</span>
+                <span class="title">Marvel Tokon Cyclops</span>
+            </div>
+            
+            <div class="item done-item">
+                <span class="badge done-badge">✓</span>
                 <span class="title">Nerd Recommendations</span>
             </div>
             
-            <div class="item upcoming-item">
-                <span class="badge upcoming-badge">7</span>
+            <div class="item active-item">
+                <span class="badge active-badge">NOW</span>
                 <span class="title">Trash Takes</span>
             </div>
             
